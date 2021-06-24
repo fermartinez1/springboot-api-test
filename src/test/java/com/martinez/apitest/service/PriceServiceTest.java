@@ -1,8 +1,10 @@
 package com.martinez.apitest.service;
 
 import com.martinez.apitest.dto.PriceDTO;
+import com.martinez.apitest.exception.PriceNotFoundException;
 import com.martinez.apitest.models.Price;
 import com.martinez.apitest.repository.PriceRepository;
+import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PriceServiceTest {
@@ -36,6 +39,7 @@ public class PriceServiceTest {
     private final String TEST_CURR = "EUR";
 
     @Test
+    @SneakyThrows
     public void getByDateTest(){
         Price price = new Price();
         price.setPrice(TEST_PRICE);
@@ -46,7 +50,7 @@ public class PriceServiceTest {
         price.setPriority(TEST_PRIORITY);
         price.setBrandId(TEST_BRAND);
         price.setProductId(TEST_PRODUCT);
-        Mockito.when(priceRepository.findAllPricesByParam(TEST_START_DATE,TEST_PRODUCT, TEST_BRAND)).thenReturn(price);
+        Mockito.when(priceRepository.findPriceByDateProductAndBrand(TEST_START_DATE,TEST_PRODUCT, TEST_BRAND)).thenReturn(Optional.of(price));
 
         PriceDTO priceDTO = new PriceDTO();
         priceDTO.setPrice(TEST_PRICE);
@@ -57,12 +61,19 @@ public class PriceServiceTest {
         priceDTO.setProductId(TEST_PRODUCT);
         Mockito.when(modelMapper.map(Mockito.any(Price.class), Mockito.any())).thenReturn(priceDTO);
 
-        PriceDTO result = priceService.getByDate(TEST_START_DATE, TEST_PRODUCT, TEST_BRAND);
+        PriceDTO result = priceService.findPriceByDateProductAndBrand(TEST_START_DATE, TEST_PRODUCT, TEST_BRAND);
         Assert.assertEquals(TEST_PRICE, result.getPrice());
         Assert.assertEquals(TEST_PRICE_LIST, result.getPriceList());
         Assert.assertEquals(TEST_END_DATE, result.getEndDate());
         Assert.assertEquals(TEST_BRAND, result.getBrandId());
         Assert.assertEquals(TEST_START_DATE, result.getStartDate());
         Assert.assertEquals(TEST_PRODUCT, result.getProductId());
+    }
+
+
+    @Test(expected = PriceNotFoundException.class)
+    public void getByDateTest_ShouldThrowException(){
+        Mockito.when(priceRepository.findPriceByDateProductAndBrand(TEST_START_DATE,TEST_PRODUCT, TEST_BRAND)).thenReturn(Optional.empty());
+        priceService.findPriceByDateProductAndBrand(TEST_START_DATE, TEST_PRODUCT, TEST_BRAND);
     }
 }

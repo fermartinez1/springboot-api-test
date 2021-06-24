@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Repository
 public interface PriceRepository extends JpaRepository<Price, Integer> {
@@ -14,7 +15,7 @@ public interface PriceRepository extends JpaRepository<Price, Integer> {
             "and :date<=p.END_DATE and product_id=:productId " +
             "and brand_id=:brandId " +
             "order by p.priority desc limit 1", nativeQuery = true)
-    Price findAllPricesByParam(@Param("date") LocalDateTime date, @Param("productId") int productId,
-                                     @Param("brandId") int brandId);
+    Optional<Price> findPriceByDateProductAndBrand(@Param("date") LocalDateTime date, @Param("productId") int productId,
+                                            @Param("brandId") int brandId);
 
 }

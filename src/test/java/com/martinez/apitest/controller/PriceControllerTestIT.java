@@ -1,11 +1,13 @@
 package com.martinez.apitest.controller;
 
 import com.martinez.apitest.dto.PriceDTO;
+import lombok.SneakyThrows;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
@@ -26,48 +28,54 @@ public class PriceControllerTestIT {
     PriceController priceController;
 
     @Test
+    @SneakyThrows
     public void get(){
-        PriceDTO result = priceController.get(TEST_DATE_5, TEST_PRODUCT, TEST_BRAND);
-        Assert.notNull(result);
+        ResponseEntity<PriceDTO> result = priceController.get(TEST_DATE_5, TEST_PRODUCT, TEST_BRAND);
+        Assert.notNull(result.getBody());
     }
 
     //Test 1: petición a las 10:00 del día 14 del producto 35455   para la brand 1 (ZARA)
     @Test
+    @SneakyThrows
     public void test_1(){
-        PriceDTO result = priceController.get(TEST_DATE_1, TEST_PRODUCT, TEST_BRAND);
+        ResponseEntity<PriceDTO> result = priceController.get(TEST_DATE_1, TEST_PRODUCT, TEST_BRAND);
         Assert.notNull(result);
-        Assert.isTrue(result.getPrice() == 35.50D);
+        Assert.isTrue(result.getBody().getPrice() == 35.50D);
     }
 
     //Test 2: petición a las 16:00 del día 14 del producto 35455   para la brand 1 (ZARA)
     @Test
+    @SneakyThrows
     public void test_2(){
-        PriceDTO result = priceController.get(TEST_DATE_2, TEST_PRODUCT, TEST_BRAND);
+        ResponseEntity<PriceDTO> result = priceController.get(TEST_DATE_2, TEST_PRODUCT, TEST_BRAND);
         Assert.notNull(result);
-        Assert.isTrue(result.getPrice() == 25.45D);
+        Assert.isTrue(result.getBody().getPrice() == 25.45D);
     }
 
     //Test 3: petición a las 21:00 del día 14 del producto 35455   para la brand 1 (ZARA)
     @Test
+    @SneakyThrows
     public void test_3(){
-        PriceDTO result = priceController.get(TEST_DATE_3, TEST_PRODUCT, TEST_BRAND);
+        ResponseEntity<PriceDTO> result = priceController.get(TEST_DATE_3, TEST_PRODUCT, TEST_BRAND);
         Assert.notNull(result);
-        Assert.isTrue(result.getPrice() == 35.50D);
+        Assert.isTrue(result.getBody().getPrice() == 35.50D);
     }
 
     //Test 4: petición a las 10:00 del día 15 del producto 35455   para la brand 1 (ZARA)
     @Test
+    @SneakyThrows
     public void test_4(){
-        PriceDTO result = priceController.get(TEST_DATE_4, TEST_PRODUCT, TEST_BRAND);
+        ResponseEntity<PriceDTO> result = priceController.get(TEST_DATE_4, TEST_PRODUCT, TEST_BRAND);
         Assert.notNull(result);
-        Assert.isTrue(result.getPrice() == 30.50d);
+        Assert.isTrue(result.getBody().getPrice() == 30.50d);
     }
 
     //Test 5: petición a las 21:00 del día 16 del producto 35455   para la brand 1 (ZARA)
     @Test
+    @SneakyThrows
     public void test_5(){
-        PriceDTO result = priceController.get(TEST_DATE_5, TEST_PRODUCT, TEST_BRAND);
+        ResponseEntity<PriceDTO> result = priceController.get(TEST_DATE_5, TEST_PRODUCT, TEST_BRAND);
         Assert.notNull(result);
-        Assert.isTrue(result.getPrice() == 38.95d);
+        Assert.isTrue(result.getBody().getPrice() == 38.95d);
     }
 }

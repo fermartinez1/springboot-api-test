@@ -1,7 +1,9 @@
 package com.martinez.apitest.controller;
 
 import com.martinez.apitest.dto.PriceDTO;
+import com.martinez.apitest.exception.PriceNotFoundException;
 import com.martinez.apitest.service.PriceServiceImpl;
+import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 
@@ -29,6 +32,7 @@ public class PriceControllerTest {
     PriceServiceImpl priceService;
 
     @Test
+    @SneakyThrows
     public void getTest(){
 
         PriceDTO priceDTOExpected = new PriceDTO();
@@ -38,15 +42,17 @@ public class PriceControllerTest {
         priceDTOExpected.setEndDate(TEST_END_DATE);
         priceDTOExpected.setStartDate(TEST_START_DATE);
         priceDTOExpected.setBrandId(TEST_BRAND);
-        Mockito.when(priceService.getByDate(TEST_END_DATE,TEST_PRODUCT, TEST_BRAND)).thenReturn(priceDTOExpected);
+        Mockito.when(priceService.findPriceByDateProductAndBrand(TEST_END_DATE,TEST_PRODUCT, TEST_BRAND)).thenReturn(priceDTOExpected);
 
-        PriceDTO result = priceController.get(TEST_END_DATE, TEST_PRODUCT, TEST_BRAND);
+        ResponseEntity<PriceDTO> result = priceController.get(TEST_END_DATE, TEST_PRODUCT, TEST_BRAND);
 
-        Assert.assertEquals(priceDTOExpected.getPrice(), result.getPrice());
-        Assert.assertEquals(priceDTOExpected.getPriceList(), result.getPriceList());
-        Assert.assertEquals(priceDTOExpected.getBrandId(), result.getBrandId());
-        Assert.assertEquals(priceDTOExpected.getEndDate(), result.getEndDate());
-        Assert.assertEquals(priceDTOExpected.getProductId(), result.getProductId());
-        Assert.assertEquals(priceDTOExpected.getStartDate(), result.getStartDate());
+        Assert.assertEquals(200, result.getStatusCodeValue());
+        Assert.assertEquals(priceDTOExpected.getPrice(), result.getBody().getPrice());
+        Assert.assertEquals(priceDTOExpected.getPriceList(), result.getBody().getPriceList());
+        Assert.assertEquals(priceDTOExpected.getBrandId(), result.getBody().getBrandId());
+        Assert.assertEquals(priceDTOExpected.getEndDate(), result.getBody().getEndDate());
+        Assert.assertEquals(priceDTOExpected.getProductId(), result.getBody().getProductId());
+        Assert.assertEquals(priceDTOExpected.getStartDate(), result.getBody().getStartDate());
     }
+
 }
